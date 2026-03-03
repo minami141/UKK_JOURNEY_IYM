@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Honeymoon Guide 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+        
+        body { 
+            font-family: 'Noto Sans JP', sans-serif; 
+            background-color: #f8f7f4; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        h1, h2, h3, .serif { 
+            font-family: 'Noto Serif JP', serif; 
+        }
+
+        .tab-active { 
+            border-bottom: 2px solid #1e293b; 
+            color: #1e293b; 
+            font-weight: 600;
+        }
+
+        .card-premium {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .details-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-premium.expanded .details-content {
+            max-height: 1200px;
+            opacity: 1;
+            padding-top: 12px;
+        }
+
+        .chevron-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .card-premium.expanded .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .accent-border-london { border-left: 4px solid #1e293b; }
+        .accent-border-liverpool { border-left: 4px solid #78350f; }
+        .accent-border-edinburgh { border-left: 4px solid #334155; }
+        .accent-border-return { border-left: 4px solid #94a3b8; }
+
+        .delete-btn { opacity: 0.3; transition: all 0.2s; }
+        .item-row:hover .delete-btn { opacity: 1; color: #ef4444; }
+        
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #334155;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-link:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-24">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-lg tracking-widest text-slate-900 font-bold uppercase">UK Journey</h1>
+            <span class="text-[10px] tracking-widest border border-slate-300 text-slate-500 px-2 py-0.5 rounded uppercase font-bold">2026</span>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex mb-6 text-[10px] tracking-widest uppercase text-slate-400 border-b border-slate-100 overflow-x-auto whitespace-nowrap">
+            <button onclick="switchTab('itinerary')" id="tab-itinerary" class="flex-1 px-4 py-3 text-center tab-active">Itinerary</button>
+            <button onclick="switchTab('todo')" id="tab-todo" class="flex-1 px-4 py-3 text-center">To Do</button>
+            <button onclick="switchTab('packing')" id="tab-packing" class="flex-1 px-4 py-3 text-center">Packing</button>
+            <button onclick="switchTab('budget')" id="tab-budget" class="flex-1 px-4 py-3 text-center">Budget</button>
+        </div>
+
+        <!-- Section: Itinerary -->
+        <div id="section-itinerary" class="space-y-4">
+            <div class="flex items-baseline justify-between mb-2">
+                <h2 class="text-xl font-bold text-slate-900">Schedule</h2>
+                <span class="text-xs text-slate-400">4.23 — 5.02</span>
+            </div>
+            
+            <div id="itinerary-cards" class="space-y-3">
+                <!-- Cards rendered via JS -->
+            </div>
+        </div>
+
+        <!-- Section: Budget -->
+        <div id="section-budget" class="hidden space-y-4">
+            <div class="flex justify-between items-end mb-4">
+                <h2 class="text-xl font-bold text-slate-900">Budget</h2>
+                <button onclick="openAddBudgetModal()" class="text-[10px] tracking-widest uppercase font-bold text-slate-400 border-b border-slate-300 pb-0.5">+ Add Expense</button>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-slate-900 rounded-2xl p-4 text-white shadow-lg">
+                    <p class="text-[9px] uppercase tracking-wider text-slate-400 mb-1 font-bold">Total JPY</p>
+                    <div class="flex items-baseline gap-0.5">
+                        <span class="text-lg font-light">¥</span>
+                        <span id="total-jpy" class="text-2xl font-bold tracking-tight">0</span>
+                    </div>
+                </div>
+                <div class="bg-indigo-900 rounded-2xl p-4 text-white shadow-lg">
+                    <p class="text-[9px] uppercase tracking-wider text-indigo-300 mb-1 font-bold">Total GBP</p>
+                    <div class="flex items-baseline gap-0.5">
+                        <span class="text-lg font-light">£</span>
+                        <span id="total-gbp" class="text-2xl font-bold tracking-tight">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="budget-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Section: Lists (Todo / Packing) -->
+        <div id="section-lists" class="hidden space-y-4">
+            <div class="flex justify-between items-end mb-2">
+                <h2 id="list-title" class="text-xl font-bold text-slate-900"></h2>
+                <button onclick="openAddModal()" class="text-[10px] tracking-widest uppercase font-bold text-slate-400 border-b border-slate-300 pb-0.5">+ Add Item</button>
+            </div>
+            <div id="list-container" class="space-y-2"></div>
+        </div>
+    </main>
+
+    <!-- Modal: Edit Information -->
+    <div id="edit-hotel-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <h3 class="text-base font-bold mb-4">情報の編集</h3>
+            <div class="space-y-6 mb-6">
+                <!-- Basic Info -->
+                <div class="space-y-3">
+                    <p class="text-[11px] font-black text-slate-900 uppercase border-b border-slate-100 pb-1">Basic Info</p>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Title</label>
+                        <input type="text" id="edit-hotel-title" class="w-full p-2 bg-slate-50 border-none rounded-lg text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Hotel / Location Name</label>
+                        <input type="text" id="edit-hotel-name" class="w-full p-2 bg-slate-50 border-none rounded-lg text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Room Type / Details</label>
+                        <input type="text" id="edit-hotel-room" class="w-full p-2 bg-slate-50 border-none rounded-lg text-sm outline-none">
+                    </div>
+                </div>
+
+                <!-- Transport Info -->
+                <div class="space-y-3 p-3 bg-blue-50/50 rounded-xl border border-blue-100">
+                    <p class="text-[11px] font-black text-blue-900 uppercase border-b border-blue-100 pb-1">Transport to next city</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-blue-400 uppercase">Depart Time</label>
+                            <input type="text" id="edit-trans-dep-time" placeholder="10:30" class="w-full p-2 bg-white border-none rounded-lg text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-blue-400 uppercase">Arr Time</label>
+                            <input type="text" id="edit-trans-arr-time" placeholder="13:00" class="w-full p-2 bg-white border-none rounded-lg text-sm outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-blue-400 uppercase">Route (Station to Station)</label>
+                        <input type="text" id="edit-trans-route" placeholder="Euston -> Lime Street" class="w-full p-2 bg-white border-none rounded-lg text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-blue-400 uppercase">Transfers (乗り換え)</label>
+                        <input type="text" id="edit-trans-transfer" placeholder="via Preston (15min wait)" class="w-full p-2 bg-white border-none rounded-lg text-sm outline-none">
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="space-y-3">
+                    <p class="text-[11px] font-black text-slate-900 uppercase border-b border-slate-100 pb-1">External Links</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="edit-link1-label" placeholder="Label 1" class="p-2 bg-slate-50 border-none rounded-lg text-xs outline-none">
+                        <input type="text" id="edit-link1-url" placeholder="URL" class="p-2 bg-slate-50 border-none rounded-lg text-xs outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="edit-link2-label" placeholder="Label 2" class="p-2 bg-slate-50 border-none rounded-lg text-xs outline-none">
+                        <input type="text" id="edit-link2-url" placeholder="URL" class="p-2 bg-slate-50 border-none rounded-lg text-xs outline-none">
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeEditHotelModal()" class="flex-1 py-3 text-xs tracking-widest uppercase font-bold text-slate-400">Cancel</button>
+                <button onclick="saveHotelEdit()" class="flex-1 py-3 bg-slate-900 rounded-xl text-xs tracking-widest uppercase font-bold text-white">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Todo/Packing -->
+    <div id="modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl">
+            <h3 class="text-base font-bold mb-4">アイテムを追加</h3>
+            <input type="text" id="new-item-text" placeholder="詳細を入力..." class="w-full p-3 bg-slate-50 border-none rounded-xl text-sm mb-4 outline-none">
+            <div class="flex gap-3">
+                <button onclick="closeAddModal()" class="flex-1 py-3 text-xs tracking-widest uppercase font-bold text-slate-400">Cancel</button>
+                <button onclick="addNewItem()" class="flex-1 py-3 bg-slate-900 rounded-xl text-xs tracking-widest uppercase font-bold text-white">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Budget -->
+    <div id="budget-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl">
+            <h3 class="text-base font-bold mb-4">費用を追加</h3>
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Currency</label>
+                    <div class="flex gap-2 mt-1">
+                        <label class="flex-1">
+                            <input type="radio" name="currency" value="JPY" checked class="hidden peer">
+                            <div class="text-center py-2 border rounded-lg text-xs font-bold peer-checked:bg-slate-900 peer-checked:text-white peer-checked:border-slate-900 text-slate-400 border-slate-100 bg-slate-50 cursor-pointer">JPY (¥)</div>
+                        </label>
+                        <label class="flex-1">
+                            <input type="radio" name="currency" value="GBP" class="hidden peer">
+                            <div class="text-center py-2 border rounded-lg text-xs font-bold peer-checked:bg-indigo-900 peer-checked:text-white peer-checked:border-indigo-900 text-slate-400 border-slate-100 bg-slate-50 cursor-pointer">GBP (£)</div>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Item Name</label>
+                    <input type="text" id="budget-name" placeholder="項目名" class="w-full p-3 bg-slate-50 border-none rounded-xl text-sm outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Amount</label>
+                    <input type="number" id="budget-value" placeholder="金額を入力" class="w-full p-3 bg-slate-50 border-none rounded-xl text-sm outline-none">
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeAddBudgetModal()" class="flex-1 py-3 text-xs tracking-widest uppercase font-bold text-slate-400">Cancel</button>
+                <button onclick="addBudgetItem()" class="flex-1 py-3 bg-slate-900 rounded-xl text-xs tracking-widest uppercase font-bold text-white">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let appState = {
+            currentTab: 'itinerary',
+            editingHotelId: null,
+            itinerary: JSON.parse(localStorage.getItem('uk_itinerary_v6')) || [
+                { 
+                    id: 'london', dates: 'Apr 23 — Apr 27', location: 'London', title: 'ロンドン滞在',
+                    hotel: 'The Tower Hotel', room: 'Standard Double Tower Bridge View', accent: 'accent-border-london',
+                    transport: { dep: '10:30', arr: '12:45', route: 'Euston -> Lime Street', transfer: '' },
+                    links: [{ label: 'Official Website', url: 'https://www.towerhotellondon.com/' }, { label: 'Google Maps', url: 'https://maps.app.goo.gl/rLwXJzYp7S1tqXp98' }]
+                },
+                { 
+                    id: 'liverpool', dates: 'Apr 27 — Apr 29', location: 'Liverpool', title: 'リヴァプール滞在',
+                    hotel: 'Hard Days Night Hotel', room: 'Luxury Room', accent: 'accent-border-liverpool',
+                    transport: { dep: '11:15', arr: '14:40', route: 'Lime Street -> Waverley', transfer: 'via Preston' },
+                    links: [{ label: 'Official Website', url: 'https://www.harddaysnighthotel.com/' }]
+                },
+                { 
+                    id: 'edinburgh', dates: 'Apr 29 — May 01', location: 'Edinburgh', title: 'エディンバラ滞在',
+                    hotel: 'Apex City of Edinburgh Hotel', room: 'Castle View Room', accent: 'accent-border-edinburgh',
+                    transport: { dep: '09:00', arr: '10:30', route: 'EDI Airport -> Gatwick', transfer: '' },
+                    links: [{ label: 'Castle Tickets', url: 'https://www.edinburghcastle.scot/' }]
+                },
+                { 
+                    id: 'gatwick', dates: 'May 01 — May 02', location: 'Gatwick', title: '空港周辺滞在',
+                    hotel: 'Hilton London Gatwick Airport', room: 'Standard Room', accent: 'accent-border-return',
+                    transport: { dep: '12:00', arr: '-', route: 'Hotel -> Departure Gate', transfer: '' },
+                    links: [{ label: 'Airport Map', url: 'https://www.gatwickairport.com/' }]
+                }
+            ],
+            todo: JSON.parse(localStorage.getItem('uk_todo')) || [
+                { id: 1, text: "英国ETA（電子渡航認証）の申請", checked: false },
+                { id: 2, text: "ロンドン〜リヴァプール間の列車予約", checked: false },
+                { id: 3, text: "エディンバラ城の予約", checked: false }
+            ],
+            packing: JSON.parse(localStorage.getItem('uk_packing')) || [
+                { id: 101, text: "パスポート（原本・写し）", checked: false },
+                { id: 102, text: "BFタイプ変換プラグ", checked: false },
+                { id: 103, text: "雨具（軽量折りたたみ傘）", checked: false }
+            ],
+            budget: JSON.parse(localStorage.getItem('uk_budget_v2')) || []
+        };
+
+        function switchTab(tab) {
+            appState.currentTab = tab;
+            ['section-itinerary', 'section-budget', 'section-lists'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            if (tab === 'itinerary') {
+                document.getElementById('section-itinerary').classList.remove('hidden');
+                renderItinerary();
+            } else if (tab === 'budget') {
+                document.getElementById('section-budget').classList.remove('hidden');
+                renderBudget();
+            } else {
+                document.getElementById('section-lists').classList.remove('hidden');
+                renderList();
+            }
+            ['itinerary', 'todo', 'packing', 'budget'].forEach(t => document.getElementById(`tab-${t}`).classList.toggle('tab-active', t === tab));
+        }
+
+        function renderItinerary() {
+            const container = document.getElementById('itinerary-cards');
+            container.innerHTML = '';
+            appState.itinerary.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `card-premium p-4 ${item.accent}`;
+                
+                const links = (item.links || []).map(link => `
+                    <a href="${link.url}" target="_blank" class="btn-link" onclick="event.stopPropagation()">
+                        <span>${link.label}</span>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-width="2"/></svg>
+                    </a>
+                `).join('');
+
+                div.innerHTML = `
+                    <div class="cursor-pointer" onclick="this.parentElement.classList.toggle('expanded')">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <span class="text-[9px] font-bold text-slate-400 uppercase">${item.dates}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] uppercase tracking-wider bg-slate-50 px-1.5 py-0.5 rounded text-slate-500 font-medium">${item.location}</span>
+                                <svg class="chevron-icon w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2"/></svg>
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-slate-800">${item.title}</p>
+                    </div>
+                    
+                    <div class="details-content border-t border-slate-50 mt-2 space-y-3">
+                        <div class="bg-slate-50 p-3 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[9px] text-slate-400 uppercase font-bold">Accommodation</p>
+                                    <p class="text-xs text-slate-700 font-bold">${item.hotel}</p>
+                                    <p class="text-[10px] text-slate-500">${item.room}</p>
+                                </div>
+                                <button onclick="openEditHotelModal('${item.id}')" class="text-[9px] text-blue-500 font-bold uppercase">Edit Info</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">${links}</div>
+
+                        <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-[9px] text-blue-400 uppercase font-bold">Transport to Next</p>
+                                <p class="text-[11px] text-blue-900 font-medium">${item.transport?.route || '-'}</p>
+                                ${item.transport?.transfer ? `<p class="text-[9px] text-blue-500 font-bold mt-1">↳ ${item.transport.transfer}</p>` : ''}
+                            </div>
+                            <div class="text-right border-l border-blue-100 pl-4 ml-4">
+                                <p class="text-[11px] text-blue-900 font-bold">${item.transport?.dep || '-'} <span class="text-blue-300 font-normal">→</span> ${item.transport?.arr || '-'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // --- Hotel Modal Logic ---
+        function openEditHotelModal(id) {
+            appState.editingHotelId = id;
+            const item = appState.itinerary.find(i => i.id === id);
+            document.getElementById('edit-hotel-title').value = item.title || '';
+            document.getElementById('edit-hotel-name').value = item.hotel || '';
+            document.getElementById('edit-hotel-room').value = item.room || '';
+            document.getElementById('edit-trans-dep-time').value = item.transport?.dep || '';
+            document.getElementById('edit-trans-arr-time').value = item.transport?.arr || '';
+            document.getElementById('edit-trans-route').value = item.transport?.route || '';
+            document.getElementById('edit-trans-transfer').value = item.transport?.transfer || '';
+            document.getElementById('edit-link1-label').value = item.links?.[0]?.label || '';
+            document.getElementById('edit-link1-url').value = item.links?.[0]?.url || '';
+            document.getElementById('edit-link2-label').value = item.links?.[1]?.label || '';
+            document.getElementById('edit-link2-url').value = item.links?.[1]?.url || '';
+            document.getElementById('edit-hotel-modal').classList.remove('hidden');
+        }
+
+        function closeEditHotelModal() { document.getElementById('edit-hotel-modal').classList.add('hidden'); }
+
+        function saveHotelEdit() {
+            const item = appState.itinerary.find(i => i.id === appState.editingHotelId);
+            if (item) {
+                item.title = document.getElementById('edit-hotel-title').value;
+                item.hotel = document.getElementById('edit-hotel-name').value;
+                item.room = document.getElementById('edit-hotel-room').value;
+                item.transport = {
+                    dep: document.getElementById('edit-trans-dep-time').value,
+                    arr: document.getElementById('edit-trans-arr-time').value,
+                    route: document.getElementById('edit-trans-route').value,
+                    transfer: document.getElementById('edit-trans-transfer').value
+                };
+                item.links = [
+                    { label: document.getElementById('edit-link1-label').value, url: document.getElementById('edit-link1-url').value },
+                    { label: document.getElementById('edit-link2-label').value, url: document.getElementById('edit-link2-url').value }
+                ].filter(l => l.label || l.url);
+                saveData(); renderItinerary(); closeEditHotelModal();
+            }
+        }
+
+        // --- List Modal Logic ---
+        function openAddModal() { document.getElementById('modal').classList.remove('hidden'); }
+        function closeAddModal() { document.getElementById('modal').classList.add('hidden'); }
+        function addNewItem() {
+            const text = document.getElementById('new-item-text').value;
+            if (!text) return;
+            const listKey = appState.currentTab;
+            appState[listKey].push({ id: Date.now(), text, checked: false });
+            saveData(); renderList(); closeAddModal();
+            document.getElementById('new-item-text').value = '';
+        }
+
+        // --- Budget Logic ---
+        function openAddBudgetModal() { document.getElementById('budget-modal').classList.remove('hidden'); }
+        function closeAddBudgetModal() { document.getElementById('budget-modal').classList.add('hidden'); }
+        
+        function addBudgetItem() {
+            const name = document.getElementById('budget-name').value;
+            const value = parseFloat(document.getElementById('budget-value').value);
+            const currency = document.querySelector('input[name="currency"]:checked').value;
+            
+            if (!name || isNaN(value)) return;
+            
+            appState.budget.push({ id: Date.now(), name, value, currency });
+            saveData(); renderBudget(); closeAddBudgetModal();
+            
+            document.getElementById('budget-name').value = '';
+            document.getElementById('budget-value').value = '';
+        }
+
+        function removeBudgetItem(id) {
+            appState.budget = appState.budget.filter(item => item.id !== id);
+            saveData(); renderBudget();
+        }
+
+        function renderBudget() {
+            const totalJpyEl = document.getElementById('total-jpy');
+            const totalGbpEl = document.getElementById('total-gbp');
+            const container = document.getElementById('budget-list');
+            container.innerHTML = '';
+            
+            let totalJpy = 0;
+            let totalGbp = 0;
+
+            appState.budget.forEach(item => {
+                if (item.currency === 'GBP') totalGbp += item.value;
+                else totalJpy += item.value;
+
+                const symbol = item.currency === 'GBP' ? '£' : '¥';
+                const colorClass = item.currency === 'GBP' ? 'text-indigo-600' : 'text-slate-400';
+                const bgClass = item.currency === 'GBP' ? 'bg-indigo-50' : 'bg-slate-50';
+
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-4 bg-white rounded-xl border border-slate-100 item-row shadow-sm";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full ${bgClass} flex items-center justify-center font-bold ${colorClass} text-sm">
+                            ${symbol}
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-800">${item.name}</p>
+                            <p class="text-[11px] text-slate-400">${symbol}${item.value.toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeBudgetItem(${item.id})" class="delete-btn p-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2"/></svg>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+            
+            totalJpyEl.innerText = totalJpy.toLocaleString();
+            totalGbpEl.innerText = totalGbp.toLocaleString();
+        }
+
+        // --- List (Todo/Packing) Logic ---
+        function renderList() {
+            const container = document.getElementById('list-container');
+            const listKey = appState.currentTab;
+            document.getElementById('list-title').innerText = listKey === 'todo' ? 'To Do' : 'Packing';
+            container.innerHTML = '';
+            appState[listKey].forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 shadow-sm item-row";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3" onclick="toggleItem(${item.id})">
+                        <div class="w-5 h-5 border-2 rounded-md flex items-center justify-center ${item.checked ? 'bg-slate-900 border-slate-900' : 'border-slate-200'}">
+                            ${item.checked ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="3"/></svg>' : ''}
+                        </div>
+                        <span class="text-sm text-slate-600 ${item.checked ? 'line-through opacity-50' : ''}">${item.text}</span>
+                    </div>
+                    <button onclick="removeItem(${item.id})" class="delete-btn p-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2"/></svg>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleItem(id) {
+            const listKey = appState.currentTab;
+            const item = appState[listKey].find(i => i.id === id);
+            if (item) item.checked = !item.checked;
+            saveData(); renderList();
+        }
+
+        function removeItem(id) {
+            const listKey = appState.currentTab;
+            appState[listKey] = appState[listKey].filter(i => i.id !== id);
+            saveData(); renderList();
+        }
+
+        // --- Data Persistence ---
+        function saveData() {
+            localStorage.setItem('uk_todo', JSON.stringify(appState.todo));
+            localStorage.setItem('uk_packing', JSON.stringify(appState.packing));
+            localStorage.setItem('uk_budget_v2', JSON.stringify(appState.budget));
+            localStorage.setItem('uk_itinerary_v6', JSON.stringify(appState.itinerary));
+        }
+
+        window.onload = () => switchTab('itinerary');
+    </script>
+</body>
+</html>
